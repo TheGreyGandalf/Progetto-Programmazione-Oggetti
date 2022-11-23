@@ -2,16 +2,17 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-//import java.util.Vector;
+import java.awt.BorderLayout;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableModel;
-//import tab;
+
     public class MyPanel extends JPanel implements ActionListener, DocumentListener {
         private JButton b;
+        private JButton nuova, elimina;
 
         private Conto[] lista;
-        tab tm = new tab(lista);
+
         private JTextField txt, txt2;
 
         //private JTable t;
@@ -25,9 +26,11 @@ import javax.swing.table.TableModel;
     public MyPanel(Conto[] listaConto) {
             //super();
 
-            //this.setLayout(new BorderLayout());
+            this.setLayout(new BorderLayout());
             //Vector v = new Vector();
             this.lista=listaConto;
+
+            tab tm = new tab(lista);
             /*
             Conto c1 = new Conto("a", "a", 1);
             Conto c2 = new Conto("b", "b", 1);
@@ -48,24 +51,27 @@ import javax.swing.table.TableModel;
 
             JPanel pTab = new JPanel();
             //pTab.setLayout(new BorderLayout());
-            pTab.add(t);
-            pTab.add(t.getTableHeader());
-            this.add(pTab);
+            pTab.add(t, BorderLayout.CENTER);
+            pTab.add(t.getTableHeader(), BorderLayout.NORTH);
+            this.add(pTab, BorderLayout.NORTH);
 
+
+            JPanel pTab2 = new JPanel();
+            //pTab2.setLayout(new BorderLayout());
             txt = new JTextField("", 25);
-            pTab.add(txt);
+            pTab2.add(txt, BorderLayout.NORTH);
 
             b= new JButton("Cliccami Tutto");
-            pTab.add(b);
-            b.addActionListener(this);
+            pTab2.add(b, BorderLayout.EAST);
             b.addActionListener(this);
 
-            l= new JLabel("Query fatta:");
-            pTab.add(l);
+            nuova= new JButton("Nuova riga");
+            pTab2.add(b, BorderLayout.EAST);
+            nuova.addActionListener(this);
 
-            txt2= new JTextField("", 25);
-            txt2.setEditable(false); // non modificabile
-            pTab.add(txt2);
+            elimina= new JButton("Elimina riga");
+            pTab2.add(b, BorderLayout.EAST);
+            elimina.addActionListener(this);
 
         }
 

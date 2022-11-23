@@ -49,4 +49,18 @@ public class tab extends AbstractTableModel {
         return 3;
     }
 
+    @Override
+    public boolean isCellEditable(/*Object valore,*/ int row, int col) {
+        // celle editabili
+
+
+        /*if (col == 2)
+            b.Data = ((Integer)valore).intValue();
+        if (col == 3)
+            b.price = ((Float)valore).floatValue();*/
+
+        //fireTableDataChanged();
+        return true;
+    }
+
 }
