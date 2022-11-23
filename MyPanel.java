@@ -43,13 +43,11 @@ import javax.swing.table.TableModel;
             //TableModel dataModel = new tab(lista);
             // crea la tabella
             JTable t = new JTable(tm);
-            JScrollPane sp = new JScrollPane(t);
             // aggiunge la tabella al pannello
 
 
             JPanel pTab = new JPanel();
             //pTab.setLayout(new BorderLayout());
-            pTab.add(sp);
             pTab.add(t);
             pTab.add(t.getTableHeader());
             this.add(pTab);
