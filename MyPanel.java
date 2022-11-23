@@ -1,20 +1,30 @@
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
+//import java.util.Vector;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.TableModel;
 //import tab;
-    public class MyPanel extends JPanel implements ActionListener {
+    public class MyPanel extends JPanel implements ActionListener, DocumentListener {
         private JButton b;
 
         private Conto[] lista;
+        tab tm = new tab(lista);
         private JTextField txt, txt2;
 
         //private JTable t;
 
         private JLabel l;
-        public MyPanel(Conto[] listaConto) {
-            super();
+
+    /**
+     *
+     * @param listaConto= La lista che contiene i dati che si andranno a leggere da stream di File
+     */
+    public MyPanel(Conto[] listaConto) {
+            //super();
+
             //this.setLayout(new BorderLayout());
             //Vector v = new Vector();
             this.lista=listaConto;
@@ -30,26 +40,34 @@ import javax.swing.table.TableModel;
             v.add(c3);
             v.add(c4);*/
 
-            TableModel dataModel = new tab(lista);
+            //TableModel dataModel = new tab(lista);
             // crea la tabella
-            JTable t = new JTable(dataModel);
+            JTable t = new JTable(tm);
+            JScrollPane sp = new JScrollPane(t);
             // aggiunge la tabella al pannello
-            add(t);
+
+
+            JPanel pTab = new JPanel();
+            //pTab.setLayout(new BorderLayout());
+            pTab.add(sp);
+            pTab.add(t);
+            pTab.add(t.getTableHeader());
+            this.add(pTab);
 
             txt = new JTextField("", 25);
-            add(txt);
+            pTab.add(txt);
 
             b= new JButton("Cliccami Tutto");
-            add(b);
+            pTab.add(b);
             b.addActionListener(this);
             b.addActionListener(this);
 
             l= new JLabel("Query fatta:");
-            add(l);
+            pTab.add(l);
 
             txt2= new JTextField("", 25);
             txt2.setEditable(false); // non modificabile
-            add(txt2);
+            pTab.add(txt2);
 
         }
 
@@ -70,6 +88,21 @@ import javax.swing.table.TableModel;
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
 
     }
 }
