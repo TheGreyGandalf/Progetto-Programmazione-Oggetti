@@ -1,23 +1,24 @@
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 import javax.swing.table.TableModel;
-import java.
 //import tab;
-
     public class MyPanel extends JPanel implements ActionListener {
         private JButton b;
+
+        private Conto[] lista;
         private JTextField txt, txt2;
 
         //private JTable t;
 
         private JLabel l;
-        public MyPanel() {
+        public MyPanel(Conto[] listaConto) {
             super();
             //this.setLayout(new BorderLayout());
-            Vector v = new Vector();
+            //Vector v = new Vector();
+            this.lista=listaConto;
+            /*
             Conto c1 = new Conto("a", "a", 1);
             Conto c2 = new Conto("b", "b", 1);
             Conto c3 = new Conto("c", "c", 1);
@@ -27,9 +28,9 @@ import java.
             v.add(c1);
             v.add(c2);
             v.add(c3);
-            v.add(c4);
+            v.add(c4);*/
 
-            TableModel dataModel = new tab(v);
+            TableModel dataModel = new tab(lista);
             // crea la tabella
             JTable t = new JTable(dataModel);
             // aggiunge la tabella al pannello
@@ -40,8 +41,8 @@ import java.
 
             b= new JButton("Cliccami Tutto");
             add(b);
-            b.addActionListener(this, v);
-            b.addActionListener();
+            b.addActionListener(this);
+            b.addActionListener(this);
 
             l= new JLabel("Query fatta:");
             add(l);
@@ -52,7 +53,7 @@ import java.
 
         }
 
-        @Override
+       /* @Override
         public void actionPerformed(ActionEvent e, Vector vector) {
             String key = this.txt.getText();
             for (int i=0; i<vector.size(); i++)
@@ -65,6 +66,10 @@ import java.
                 this.txt2.setText("NESSUNA CORRISPONDENZA TROVATA");
             }
 
-        }
+        }*/
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
     }
+}

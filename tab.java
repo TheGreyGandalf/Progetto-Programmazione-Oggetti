@@ -1,5 +1,13 @@
 import java.util.Vector;
-public class tab {
+import javax.swing.table.AbstractTableModel;
+public class tab extends AbstractTableModel {
+    private Conto[] arrayConto;
+    //private Vector v;
+
+    public tab(Conto[] C) {
+        //this.v = v; // inizializzato con il vettore
+        this.arrayConto=C;
+    }
 /**
  * il numero di colonne
  */
@@ -10,34 +18,35 @@ public class tab {
  */
     @Override
     public int getRowCount() {
-        return v.size();
+        if(arrayConto == null) return 0;
+        return arrayConto.length;
         }
 
-/**
- * restituisce il contenuto di una cella
- */
+
+    /**
+     *
+     * @param row        the row whose value is to be queried
+     * @param col     the column whose value is to be queried
+     */
     @Override
     public Object getValueAt(int row, int col) {
         // seleziona il libro
-        Conto c = (Conto) v.elementAt(row);
-        // la stringa corrispondente alla colonna
-        switch (col) {
-        case 0:
-        return c.Data;
-        case 1:
-        return c.Descrizione;
-        case 2:
-        return c.Ammontare;
-        default:
+        switch (col)
+        {
+            case 0: return arrayConto[row].getData();
+            case 1: return arrayConto[row].getDescrizione();
+            case 2: return arrayConto[row].getAmmontare();
+        }
         return "";
         }
 
-
-        }
-
-
+    /**
+     *
+     * Funzione che assegna il numero di clonne che sono necessare alla tabella per visualizzare i dati richiesti
+     */
     @Override
     public int getColumnCount() {
-        return ColName.length;
+        return 3;
     }
+
 }
