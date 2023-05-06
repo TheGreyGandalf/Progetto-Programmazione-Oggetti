@@ -29,17 +29,19 @@ public class tab extends DefaultTableModel {
                                                     //per eventuali scritture
     private ArrayList<Integer> dim_din;
 
+    private JTextField CampoNetto;
+
     /**
      *
      * @param C Array che contiene la lista degli oggetti da inserire
      * @param s Arraylist che passo per poter avere il nome del file sempre aggiornato
      */
-    public tab(ArrayList<Conto> C, ArrayList<String> s, ArrayList<Integer>dim) {
+    public tab(ArrayList<Conto> C, ArrayList<String> s/*, JTextField CampoN*/) {
         //this.v = v; // inizializzato con il vettore
         //arrayConto=new ArrayList<>(C);
         arrayConto=C;
         salvataggio=s;                 //Passaggi tramite riferimento per via di funzioni delicate
-        dim_din= dim;                   //Passaggi tramite riferimento per via di funzioni delicate
+        //CampoNetto=new JTextField(String.valueOf(CampoN));  //Passaggi tramite riferimento per via di funzioni delicate
 
         settaValori();
     }
@@ -47,7 +49,6 @@ public class tab extends DefaultTableModel {
     /**
      * Costruttore vuoto, non utilizzato
      */
-
     public tab() {
 
     }
@@ -183,6 +184,18 @@ public class tab extends DefaultTableModel {
         if(col==2){
             contello.setAmmontare(Integer.parseInt(value.toString()));
             arrayConto.set(row, contello);
+
+            /*CalcolaEntrate ca = new CalcolaEntrate(arrayConto);
+            CampoNetto.setText(String.valueOf(ca.calcolatore()));
+            System.out.println(ca.calcolatore());               //questo è corretto
+
+            CampoNetto.repaint();
+            CampoNetto.validate();
+            Cambia();
+            settaValori();
+            CampoNetto.repaint();
+
+             */
         }
 
         ScritturaFile s = new ScritturaFile();

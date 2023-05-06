@@ -46,7 +46,7 @@ public class MyPanel extends JPanel implements ActionListener {
 
         private ArrayList<String> Salvataggio;
 
-        private final JTextField txt,txt2,EtiExcel,CampoNetto;  //Campo calcolato in cui si inserisce il totale di entrate
+        private JTextField txt,txt2,EtiExcel,CampoNetto = null;  //Campo calcolato in cui si inserisce il totale di entrate
 
         private final JTextField periodo_1;       //,periodo_2;     //campi per inserimento periodo
         private final JButton Giorno, Settimana, Mese, Anno, Prossimo, Reset;  //Periodo,
@@ -80,7 +80,7 @@ public class MyPanel extends JPanel implements ActionListener {
             Salvataggio.add(Nome_File.toString());
 
             // crea la tabella
-            tm = new tab(lista, Salvataggio, dim_rip);
+            tm = new tab(lista, Salvataggio/*, CampoNetto*/);
             //tm.settaValori(lista.size(), tm.getColumnCount());//t.setModel(tm);
 
             t = new JTable(tm);   // aggiunge la tabella al pannello
@@ -594,7 +594,7 @@ public class MyPanel extends JPanel implements ActionListener {
             //return lista;
         }
 
-        dim_rip.add(Listaperiodo.size());
+        //dim_rip.add(Listaperiodo.size());
 
         /************************/
 
@@ -822,6 +822,11 @@ public class MyPanel extends JPanel implements ActionListener {
         if (flag==0 || copia.isEmpty())
         {
             JOptionPane.showMessageDialog(null, "Nulla Da Resettare!");
+
+            CalcolaEntrate ca = new CalcolaEntrate(lista);
+            CampoNetto.setText(String.valueOf(ca.calcolatore()));
+            CampoNetto.repaint();
+
             return;
         }
 
