@@ -93,6 +93,7 @@ public class ScritturaFile {
     /**
      * @param f Varviabile file del file in cui andiamo a scrivere
      * @param Valori Arraylist con valori che andiamo a scrivere
+     * Metodo che viene utilizzato per l'esportazione in OpenDocument
      */
 
     public void OpenDoc(File f, ArrayList<Conto> Valori)

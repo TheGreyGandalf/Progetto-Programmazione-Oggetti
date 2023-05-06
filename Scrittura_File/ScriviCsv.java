@@ -8,7 +8,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+/**
+ * Sottoclasse che specializza l'esportazione in esportazione in .csv
+ */
 public class ScriviCsv extends ScritturaFile {
+    /**
+     *
+     * @param Nomef Nome del file in cui andremo a esportare
+     * @param lista Lista con aggiunta di voci a cui andremo a scrivere
+     * @param tipo Se il file viene aperto e utilizzato in append
+     * Metodo utilizzato per il polimorfismo
+     */
     public void ScriviNormale(String Nomef, ArrayList<Conto> lista, boolean tipo)
     {
         try {
@@ -16,14 +26,14 @@ public class ScriviCsv extends ScritturaFile {
             FileWriter fw = new FileWriter(file, tipo);         //passo file e se scrivo in append
             pw = new PrintWriter(fw);               //Strumento con cui vado a scrivere su file
 
-            for (int i=0;i<lista.size();i++)            //Scrittura su file di tutto il contenuto
-            {
+            //Scrittura su file di tutto il contenuto
+            for (Conto conto : lista) {
                 String Dat, Desc;
                 int ammo;
-                Dat=lista.get(i).getData();
-                Desc=lista.get(i).getDescrizione();
-                ammo=lista.get(i).getAmmontare();
-                pw.println(Dat+","+Desc+","+ammo);              //Scrittura con dati separati da ,
+                Dat = conto.getData();
+                Desc = conto.getDescrizione();
+                ammo = conto.getAmmontare();
+                pw.println(Dat + "," + Desc + "," + ammo);              //Scrittura con dati separati da ,
             }
         } catch (IOException e)
         {

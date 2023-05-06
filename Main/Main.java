@@ -15,14 +15,19 @@ import java.util.Scanner;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
+/**
+ * Main da cui parte la lettura da file dei dati, se viene passato un file viene letto quello
+ * In alternativa, in assenza di file da leggere viene fatto leggere il file dati.txt che contiene dati
+ * di un utilizzo tipo
+ */
 public class Main {
     public static void main(String[] args) throws IOException {
         JFrame f = new JFrame("Programma Esame Oggetti");
 
         File fil;
-        if (args.length!=0){
+        if (args.length!=0){                                            //in caso gli argomenti passati siano  non nulli
             fil=new File(args[1]);
-        }else {
+        }else {                                                         //caso in cui gli argomenti passati siano nulli
             fil= new File("Struttura/dati"+".txt");                     //file da cui leggiamo i dati
         }
 
@@ -33,7 +38,7 @@ public class Main {
         int ammo;
 
         ArrayList<Conto> arr =new ArrayList<>();
-        while(scan.hasNextLine())
+        while(scan.hasNextLine())                       //lettura e riempimento array
         {
             Dat= scan.nextLine();
             Desc= scan.nextLine();

@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.text.SimpleDateFormat;  //Per capire se le date sono valide
 import java.text.ParseException;    //Per errori di conversione
@@ -47,7 +48,7 @@ public class MyPanel extends JPanel implements ActionListener {
 
         private final JTextField txt,txt2,EtiExcel,CampoNetto;  //Campo calcolato in cui si inserisce il totale di entrate
 
-        private final JTextField periodo_1,periodo_2;     //campi per inserimento periodo
+        private final JTextField periodo_1;       //,periodo_2;     //campi per inserimento periodo
         private final JButton Giorno, Settimana, Mese, Anno, Prossimo, Reset;  //Periodo,
         //pulsanti per vari tipi di raggruppamenti
 
@@ -57,8 +58,12 @@ public class MyPanel extends JPanel implements ActionListener {
         private ScritturaFile Onfile;
 
         private int flag=0;
+        private boolean se_nulla=false;         //flag che controlla se la ricerca produce un valore nullo
+        private boolean se_resettato=true;     //flag che controlla se prima di una nuova ricerca è stato fatto reset
         private int el=-1;               //Elemento che contiene il primo match
         private File Nome_File;            //Attributo che contiene il nome del file da cui andiamo a salvare/leggere
+
+        private ArrayList<Integer> dim_rip;
 
     /**
      *
@@ -75,7 +80,7 @@ public class MyPanel extends JPanel implements ActionListener {
             Salvataggio.add(Nome_File.toString());
 
             // crea la tabella
-            tm = new tab(lista, Salvataggio);
+            tm = new tab(lista, Salvataggio, dim_rip);
             //tm.settaValori(lista.size(), tm.getColumnCount());//t.setModel(tm);
 
             t = new JTable(tm);   // aggiunge la tabella al pannello
@@ -98,7 +103,6 @@ public class MyPanel extends JPanel implements ActionListener {
             pTab.add(CampoNetto, BorderLayout.SOUTH);
             this.add(pTab, BorderLayout.NORTH);                 //Il tutto a NORD
 
-
             //SECONDO pannello
             JPanel PanDate = new JPanel();      //pannello con campi per ricerca periodo
 
@@ -107,9 +111,9 @@ public class MyPanel extends JPanel implements ActionListener {
              */
             PanDate.setLayout(new BorderLayout());
             periodo_1 = new JTextField("Periodo Ricerca", 10);
-            periodo_2 = new JTextField("Periodo Fine", 10);
+            //periodo_2 = new JTextField("Periodo Fine", 10);
             PanDate.add(periodo_1, BorderLayout.WEST);
-            PanDate.add(periodo_2, BorderLayout.CENTER);
+            //PanDate.add(periodo_2, BorderLayout.CENTER);
 
             JPanel panGioBott = new JPanel();
             panGioBott.setLayout(new BorderLayout());
@@ -211,11 +215,11 @@ public class MyPanel extends JPanel implements ActionListener {
             nuova= new JButton("Nuova riga");
             nuova.addActionListener(new ActionListener() {
                 /**
-                 *
-                 * @param e, Pannello che compare quando l'utente clicca nuovo Utente, NON toccare!!
+                 * @param e, Pannello che compare quando l'utente clicca nuovo Utente
                  */
                 @Override
                 public void actionPerformed(ActionEvent e) {
+
                     class MyPanel2 extends JPanel{
                         private ArrayList<Conto> listaPassata;               //Lista che andremo ad utilizzare
                         private final JButton Aggiungi;                   //bottone per aggiunta di valori a tabella
@@ -273,6 +277,14 @@ public class MyPanel extends JPanel implements ActionListener {
                                       t.repaint();
                                     }
                                     else{
+                                        try{
+                                            int p=Integer.parseInt(c3);
+                                        }catch (NumberFormatException N){
+                                            showMessageDialog(null, "Ammontare non valida", "Errore", ERROR_MESSAGE);
+                                            f.dispose();
+                                            t.repaint();
+                                        }
+
                                     Conto ogg= new Conto(c1, c2, Integer.parseInt(c3));
                                     lista.add(ogg);                             //Aggiungo informazioni alla lista
 
@@ -280,18 +292,16 @@ public class MyPanel extends JPanel implements ActionListener {
                                     CampoNetto.setText(String.valueOf(ca.calcolatore()));
                                     CampoNetto.repaint();
 
-                                    f.dispose();
-                                    t.repaint();
-                                    //tm.addRow((new Object[]{c1, c2, Integer.parseInt(c3)}));
+                                    f.dispose();                    //chiude la finestra
+                                    t.repaint();                    //Ridisegna la finestra
                                     tm.Cambia();
                                     //String Utente = EtiExcel.getText();   Da usare!
                                     ScritturaFile sc = new ScritturaFile();
                                     sc.ScriviNormale(Nome_File.toString(), lista, false);      //scrivo su file le modifiche
                                     //le scrivo su file
                                     tm.settaValori();
-                                    t.repaint();
+                                    t.repaint();                    //Ridisegna la tabella
                                     }
-
                                     //t.invalidate();
                                 }
                             });
@@ -302,16 +312,23 @@ public class MyPanel extends JPanel implements ActionListener {
                     /**
                      * Azione che compie il Secondo pannello, il richiamo del pannello di aggiunta
                      */
-                    JFrame f = new JFrame("Inserire nuovo Utente");
+                    JFrame f;
+                    if (!se_resettato) {
+                        showMessageDialog(null, "Aggiunta non possibile, necessario reset"
+                                , "Errore", ERROR_MESSAGE);
+                    }
+                    else {
+                        f=new JFrame("Inserire nuovo Utente");
                     /*ArrayList<Classe_Conto.Conto> Listanuovo = new ArrayList<>(1);
                     Classe_Conto.Conto Con= new Classe_Conto.Conto("","",0);
                     Listanuovo.add(Con);*/
-                    MyPanel2 panel = new MyPanel2(f);
-                    f.add(panel);
-                    f.pack();
-                    f.setDefaultCloseOperation(EXIT_ON_CLOSE);
-                    f.setLocationRelativeTo(null);
-                    f.setVisible(true);
+                        MyPanel2 panel = new MyPanel2(f);
+                        f.add(panel);
+                        f.pack();
+                        f.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                        f.setLocationRelativeTo(null);
+                        f.setVisible(true);
+                    }
 
                 }
             });
@@ -326,23 +343,28 @@ public class MyPanel extends JPanel implements ActionListener {
                  */
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    ScritturaFile scr= new ScritturaFile();
                     int i = t.getSelectedRow();
-                    lista.remove(i);                        //elimino elemento selezionato
-                    //String Utente = EtiExcel.getText();    //da usare
-                    scr.ScriviNormale(Nome_File.toString(), lista, false);
+                    if(i<0)             //se nessuna riga è selezionata non viene eliminato nulla
+                    {
+                        showMessageDialog(null, "Eliminazione non possibile, necessaria selezione"
+                                , "Errore", ERROR_MESSAGE);
+                    }
+                    else
+                    {
+                        ScritturaFile scr = new ScritturaFile();
 
+                        lista.remove(i);                        //elimino elemento selezionato
+                        //String Utente = EtiExcel.getText();    //da usare
+                        scr.ScriviNormale(Nome_File.toString(), lista, false);
 
-                    CalcolaEntrate ca = new CalcolaEntrate(lista);
-                    CampoNetto.setText(String.valueOf(ca.calcolatore()));
-                    CampoNetto.repaint();
+                        CalcolaEntrate ca = new CalcolaEntrate(lista);
+                        CampoNetto.setText(String.valueOf(ca.calcolatore()));
+                        CampoNetto.repaint();
 
-
-                    t.repaint();
-                    tm.settaValori();
-                    //tm.Cambia();
-                    t.repaint();
-                    //t.invalidate();
+                        t.repaint();
+                        tm.settaValori();
+                        t.repaint();
+                    }
                 }
             });
             pTab3.add(elimina, BorderLayout.SOUTH);
@@ -498,7 +520,7 @@ public class MyPanel extends JPanel implements ActionListener {
     /**
      *
      * @param gg I giorni da sottrarre
-     * @param passato1 Periodo di inizio
+     * @param passato1 Periodo di inizio, già controllato se periodo valido
      * @param passato2 Periodo di fine
      * @return Array con periodi aggiustati
      */
@@ -509,15 +531,9 @@ public class MyPanel extends JPanel implements ActionListener {
 
         LocalDate PeriodoSottratto;
         LocalDate per;
-        LocalDate per2;
+        //LocalDate per2;
             //PeriodoSottratto.format(dtf);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        dateFormat.setLenient(false);
-        try {
-            dateFormat.parse(passato1.toString().trim());
-        } catch (ParseException pe) {
-            showMessageDialog(null, "Periodo non valido", "Errore", ERROR_MESSAGE);
-        }
+        //
 
         switch (gg) {
             case (1) -> {
@@ -568,8 +584,6 @@ public class MyPanel extends JPanel implements ActionListener {
                 }
             }
             */
-
-
             default -> {
             }
         }
@@ -579,6 +593,8 @@ public class MyPanel extends JPanel implements ActionListener {
             showMessageDialog(null, "Periodo senza dati", "Errore", ERROR_MESSAGE);
             //return lista;
         }
+
+        dim_rip.add(Listaperiodo.size());
 
         /************************/
 
@@ -597,13 +613,35 @@ public class MyPanel extends JPanel implements ActionListener {
      * @return
      */
 
+    /**
+     *
+     * @param Primo   valore della data da cui vanno sottratti i periodi
+     * @param Secondo Valore morto, non ha una vera utilità, era per la predisposizione a ricerca per periodo
+     * @param gg        Numero di giorni che vanno sottratti
+     * @return          Un arraylist contenete i valori che ricadono nel periodo richiesto
+     */
     public ArrayList<Conto> perio(String Primo, String Secondo, int gg){
         //tm.settaValori();
         //t.repaint();
+        se_nulla=false;
         ArrayList<Conto> Listaperiodo;
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate now = LocalDate.now();
         now.format(dtf);
+        try {
+            LocalDate l = LocalDate.parse(Primo, dtf);
+        }catch (DateTimeParseException e) {
+            showMessageDialog(null, "Data non valida", "Errore", ERROR_MESSAGE);
+            se_nulla=true;
+            return null;
+        }
+
+        if (!se_resettato)
+        {
+            showMessageDialog(null, "Resettare valore prima di una ricerca nuova", "Errore", ERROR_MESSAGE);
+            return lista;               //******************************************************************/
+        }
+
         LocalDate passato1 = LocalDate.parse(Primo, dtf);
         //LocalDate passato2 = LocalDate.parse(Secondo, dtf);
         ArrayList<Conto> rit;
@@ -691,6 +729,7 @@ public class MyPanel extends JPanel implements ActionListener {
 
     /**
      * Metodo per la ricerca di un match successivo nella lista
+     * @param el valore che viene utilizzato per assicurarsi che sia stato prima cercato un valore prima del successivo
      */
 
     private void RicercaSuccessivo(int el){
@@ -718,57 +757,57 @@ public class MyPanel extends JPanel implements ActionListener {
      */
     private void modificatore()
     {
-
-        copia= new ArrayList<>();                   //istanzio la copia
-        String Dat, Desc;
-        int ammo;
-        for (Conto c:lista) {
-            Dat= c.getData();
-            Desc= c.getDescrizione();
-            ammo= c.getAmmontare();
-            Conto ogg= new Conto(Dat, Desc, ammo);
-            copia.add(ogg);
+        if (!se_resettato){
+            return;
         }
-
-        lista.clear();
-
-        flag=1;
-
-        if (Aggiustata.isEmpty())           //se la ricerca non ha prodotto risultato
+        if(se_nulla)
         {
+            return;
+        }
+        else {
+
+            if (Aggiustata.isEmpty())           //se la ricerca non ha prodotto risultato semplicemente non fa nulla
+            {
+                return;
+            }
+
+            se_resettato=false;             //per la prossima ricerca serve prima un reset!
+
+            copia = new ArrayList<>();                   //istanzio la copia
+            String Dat, Desc;
+            int ammo;
+            for (Conto c : lista) {
+                Dat = c.getData();
+                Desc = c.getDescrizione();
+                ammo = c.getAmmontare();
+                Conto ogg = new Conto(Dat, Desc, ammo);
+                copia.add(ogg);
+            }
+
+            lista.clear();
+
+            flag = 1;           //La lista non è più quella originaria, flag set a true
+
+            //una volta copiata la pulisco
+            for (Conto c : Aggiustata) {
+                Dat = c.getData();
+                Desc = c.getDescrizione();
+                ammo = c.getAmmontare();
+                Conto ogg = new Conto(Dat, Desc, ammo);
+                lista.add(ogg);
+            }
+
             /*************/
             CalcolaEntrate ca = new CalcolaEntrate(Aggiustata);
             CampoNetto.setText(String.valueOf(ca.calcolatore()));
             CampoNetto.repaint();
             /************************/
 
-            //tm.Cambia();
+            tm.Cambia();
             t.repaint();
             tm.settaValori();
             t.repaint();
-            return;
         }
-
-                             //una volta copiata la pulisco
-        for (Conto c: Aggiustata) {
-            Dat= c.getData();
-            Desc= c.getDescrizione();
-            ammo= c.getAmmontare();
-            Conto ogg= new Conto(Dat, Desc, ammo);
-            lista.add(ogg);
-        }
-
-        /*************/
-        CalcolaEntrate ca = new CalcolaEntrate(Aggiustata);
-        CampoNetto.setText(String.valueOf(ca.calcolatore()));
-        CampoNetto.repaint();
-        /************************/
-
-        tm.Cambia();
-        t.repaint();
-        tm.settaValori();
-        t.repaint();
-
 
     }
 
@@ -779,6 +818,7 @@ public class MyPanel extends JPanel implements ActionListener {
 
     private void resettatore()
     {
+        se_resettato=true;
         if (flag==0 || copia.isEmpty())
         {
             JOptionPane.showMessageDialog(null, "Nulla Da Resettare!");

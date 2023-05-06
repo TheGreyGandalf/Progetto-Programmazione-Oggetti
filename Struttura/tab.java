@@ -16,40 +16,45 @@ import java.util.ArrayList;
 
 import static javax.swing.JOptionPane.*;
 
+/**
+ * Classe tab che modella un TableModel, questo modello funge da "ascoltatore" delle azioni che possono
+ * essere fatte nella tabella
+ */
+
 public class tab extends DefaultTableModel {
 
     private DefaultTableModel tm ;
-    private ArrayList<Conto> arrayConto;
-    private JTable tabella;
-
-    private ArrayList<String> salvataggio;
+    private ArrayList<Conto> arrayConto;            //ArrayList principale su cui vengono fatte varie operazioni
+    private ArrayList<String> salvataggio;          //Array che viene passato per ricordare il nome del file da utilizzare
+                                                    //per eventuali scritture
+    private ArrayList<Integer> dim_din;
 
     /**
      *
      * @param C Array che contiene la lista degli oggetti da inserire
      * @param s Arraylist che passo per poter avere il nome del file sempre aggiornato
      */
-    public tab(ArrayList<Conto> C, ArrayList<String> s) {
+    public tab(ArrayList<Conto> C, ArrayList<String> s, ArrayList<Integer>dim) {
         //this.v = v; // inizializzato con il vettore
         //arrayConto=new ArrayList<>(C);
         arrayConto=C;
-        salvataggio=s;
+        salvataggio=s;                 //Passaggi tramite riferimento per via di funzioni delicate
+        dim_din= dim;                   //Passaggi tramite riferimento per via di funzioni delicate
 
         settaValori();
     }
+
+    /**
+     * Costruttore vuoto, non utilizzato
+     */
 
     public tab() {
 
     }
 
-    public void setSalvataggio(String salvataggio) {
-        this.salvataggio.clear();
-        this.salvataggio.add(salvataggio);
-    }
-
     /**
- * numero righe = dimensione del vettore
- */
+    * numero righe = dimensione del vettore
+    */
     @Override
     public int getRowCount() {
         if(arrayConto == null) return 0;
@@ -77,13 +82,13 @@ public class tab extends DefaultTableModel {
 
     /**
      * Metodo che aggiunge UNA sola riga per l'aggiunta e in diretta aggiunge il record
+     * Vengono aggiunte righe di oggetti una alla volta
      */
     public void Cambia() {
         String Dat, Desc;
         int ammo;
         int max = arrayConto.size()-1;
         DefaultTableModel tavolam= tm;
-        JTable table = new JTable(tm);
         Dat=arrayConto.get(max).getData();
         Desc=arrayConto.get(max).getDescrizione();
         ammo=arrayConto.get(max).getAmmontare();
@@ -99,24 +104,19 @@ public class tab extends DefaultTableModel {
         String Dat, Desc;
         int ammo;
         tm= new DefaultTableModel();
-        JTable table = new JTable(tm);
         tm.addColumn(getColumnName(0));
         tm.addColumn(getColumnName(1));
         tm.addColumn(getColumnName(2));
 
-        for (int i = 0; i < arrayConto.size(); i++) {
-            Dat=arrayConto.get(i).getData();
-            Desc=arrayConto.get(i).getDescrizione();
-            ammo=arrayConto.get(i).getAmmontare();
+        for (Conto conto : arrayConto) {
+            Dat = conto.getData();
+            Desc = conto.getDescrizione();
+            ammo = conto.getAmmontare();
             tm.addRow(new Object[]{Dat, Desc, ammo});
         }
     }
 
-    public void RiSetta(ArrayList<Conto> c)
-    {
-        arrayConto=c;
-        settaValori();
-    }
+    /*
 
     public void importTable(String s,ArrayList<Conto> c)
     {
@@ -143,13 +143,23 @@ public class tab extends DefaultTableModel {
         //settaValori();
     }
 
+     */
+
     /**
      *
      * @param value          Il valore "oggetto" che è stato inserito
      * @param row             Riga in cui è inserito
      * @param col          Colonna in cui è inserito
+     *
+     * Modifica valore in caso un campo della tabella venga richiesto di essere modificato
+     * Infine salvato
      */
     public void setValueAt(Object value, int row, int col) {
+        /*if (row==-1)
+        {
+            row=dim_din.get(0);
+        }*/
+
         Conto contello = arrayConto.get(row);
 
         if (col == 0) {
@@ -198,14 +208,20 @@ public class tab extends DefaultTableModel {
 
     /**
      *
-     * Funzione che assegna il numero di colonne che sono necessare alla tabella per visualizzare i dati richiesti
+     * Metodo che assegna il numero di colonne che sono necessarie alla tabella per visualizzare i dati
+     * richiesti
      */
     @Override
     public int getColumnCount() {
         return 3;
     }
 
-
+    /**
+     *
+     * @param row             la riga il cui valore è modificato
+     * @param col          La colonna il cui valore è modificato
+     * @return true le celle sono tutte editabili
+     */
    @Override
     public boolean isCellEditable(int row, int col) {
         return true;
