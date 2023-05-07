@@ -5,7 +5,7 @@ Consegna Fornitore
 Consegna fornitore
 -50000
 06/12/2022
-Manuele
+papapaae
 12345
 23/12/2022
 Cancelleria
@@ -18,19 +18,22 @@ pipi belaa
 15
 27/01/2023
 Consegna
-100
+1
 27/01/2023
 Consegna
 234
 27/01/2023
-Consegna
+Consegnaasc
 12365
 14/04/2023
 Ciaooo
 63333
 17/04/2023
-Pippo
+Pippoascscass
 100
+17/04/2023
+Plutosacs
+234
 17/04/2023
 papapa
 56
@@ -39,7 +42,4 @@ ho capito cosa non va?
 123
 02/05/2023
 Magari!
-2359
-06/05/2023
-fwe
-12
+23

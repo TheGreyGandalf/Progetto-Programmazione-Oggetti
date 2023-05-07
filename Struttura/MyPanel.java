@@ -63,8 +63,6 @@ public class MyPanel extends JPanel implements ActionListener {
         private int el=-1;               //Elemento che contiene il primo match
         private File Nome_File;            //Attributo che contiene il nome del file da cui andiamo a salvare/leggere
 
-        private ArrayList<Integer> dim_rip;
-
     /**
      *
      * @param listaConto= La lista che contiene i dati che si andranno a leggere da stream di File
@@ -78,9 +76,10 @@ public class MyPanel extends JPanel implements ActionListener {
             lista=listaConto;
             Salvataggio = new ArrayList<>();
             Salvataggio.add(Nome_File.toString());
+            Salvataggio.add("0");
 
             // crea la tabella
-            tm = new tab(lista, Salvataggio/*, CampoNetto*/);
+            tm = new tab(lista, Salvataggio);
             //tm.settaValori(lista.size(), tm.getColumnCount());//t.setModel(tm);
 
             t = new JTable(tm);   // aggiunge la tabella al pannello
@@ -280,7 +279,7 @@ public class MyPanel extends JPanel implements ActionListener {
                                         try{
                                             int p=Integer.parseInt(c3);
                                         }catch (NumberFormatException N){
-                                            showMessageDialog(null, "Ammontare non valida", "Errore", ERROR_MESSAGE);
+                                            showMessageDialog(null, "Ammontare non valido", "Errore", ERROR_MESSAGE);
                                             f.dispose();
                                             t.repaint();
                                         }
@@ -394,9 +393,24 @@ public class MyPanel extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String Utente = EtiExcel.getText();
-                    File fif = new File(Utente+".ods");
-                    ScritturaFile.fillData OnOpe = new ScritturaFile.fillData(t, fif);
-                    OnOpe.OpenDoc(fif, lista);          //scrittura su open document
+                    if (!Utente.isEmpty()) {
+                        File fif = new File(Utente + ".ods");
+                        ScritturaFile.fillData OnOpe = new ScritturaFile.fillData(t, fif);
+                        if (fif.exists() || fif.isDirectory()) {
+                            if ((JOptionPane.showConfirmDialog(null,
+                                    "File già esistente, sovrascrivere?",
+                                    "Attenzione", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)) {
+                                OnOpe.OpenDoc(fif, lista);          //scrittura su open document
+                            }
+                        } else {
+                            OnOpe.OpenDoc(fif, lista);
+                        }
+                    }
+                    else
+                    {
+                        showMessageDialog(null, "Campo vuoto, non valido"
+                                , "Errore", ERROR_MESSAGE);
+                    }
                 }
             });
             
@@ -406,18 +420,22 @@ public class MyPanel extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String Utente = EtiExcel.getText();
-                    File Ut = new File(Utente+".csv");
-                    Onfile = new ScriviCsv();                //Polimorfismo utilizzato con successo
-                    if(Ut.exists() || Ut.isDirectory()) {
-                        if((JOptionPane.showConfirmDialog(null,"File già esistente, sovrascrivere?", "Attenzione", JOptionPane.YES_NO_OPTION)== JOptionPane.YES_OPTION))
-                        {
-                            //Scrittura anche in caso il file sia già esistente
+                    if (!Utente.isEmpty()) {
+                        File Ut = new File(Utente + ".csv");
+                        Onfile = new ScriviCsv();                //Polimorfismo utilizzato con successo
+                        if (Ut.exists() || Ut.isDirectory()) {
+                            if ((JOptionPane.showConfirmDialog(null, "File già esistente, sovrascrivere?", "Attenzione", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)) {
+                                //Scrittura anche in caso il file sia già esistente
+                                Onfile.ScriviNormale(Utente, lista, false);
+                            }
+                        } else {
                             Onfile.ScriviNormale(Utente, lista, false);
                         }
                     }
                     else
                     {
-                        Onfile.ScriviNormale(Utente, lista, false);
+                        showMessageDialog(null, "Campo vuoto, non valido"
+                                , "Errore", ERROR_MESSAGE);
                     }
                 }
             });
@@ -429,19 +447,23 @@ public class MyPanel extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String Utente = EtiExcel.getText();
-                    File Ut = new File(Utente+".txt");
-                    //System.out.println(file.getName());
-                    Onfile = new ScritturaFile();           //Reset del tipo per polimorfismo
-                    if(Ut.exists() || Ut.isDirectory()) {
-                        if((JOptionPane.showConfirmDialog(null,"File già esistente, sovrascrivere?", "Attenzione", JOptionPane.YES_NO_OPTION)== JOptionPane.YES_OPTION))
-                        {
-                            //Scrittura anche in caso il file sia già esistente
+                    if (!Utente.isEmpty()) {
+                        File Ut = new File(Utente + ".txt");
+                        //System.out.println(file.getName());
+                        Onfile = new ScritturaFile();           //Reset del tipo per polimorfismo
+                        if (Ut.exists() || Ut.isDirectory()) {
+                            if ((JOptionPane.showConfirmDialog(null, "File già esistente, sovrascrivere?", "Attenzione", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)) {
+                                //Scrittura anche in caso il file sia già esistente
+                                Onfile.ScriviNormale(Utente, lista, false);
+                            }
+                        } else {
                             Onfile.ScriviNormale(Utente, lista, false);
                         }
                     }
                     else
                     {
-                        Onfile.ScriviNormale(Utente, lista, false);
+                        showMessageDialog(null, "Campo vuoto, non valido"
+                                , "Errore", ERROR_MESSAGE);
                     }
                 }
             });
@@ -489,14 +511,8 @@ public class MyPanel extends JPanel implements ActionListener {
                     }
 
                     Salvataggio.clear();
-                    Salvataggio.add(Nome_File.toString());
-
-                    //tab tip=new tab(lista, Nome_File.toString());
-                    //tip.setSalvataggio(Nome_File.toString());
-                    //tm=tip;
-                    //tm.setSalvataggio(Nome_File.toString());
-
-                    //new JTable(tip);                    // aggiunge la tabella al pannello
+                    Salvataggio.add(Nome_File.toString());          //Inserisco il nome del file
+                    Salvataggio.add("0");                           //Inserisco la possibilità di modifica
 
                     /**************************************************/
                     CalcolaEntrate ca = new CalcolaEntrate(lista);
@@ -772,6 +788,8 @@ public class MyPanel extends JPanel implements ActionListener {
             }
 
             se_resettato=false;             //per la prossima ricerca serve prima un reset!
+            Salvataggio.remove(1);
+            Salvataggio.add("1");
 
             copia = new ArrayList<>();                   //istanzio la copia
             String Dat, Desc;
@@ -819,6 +837,10 @@ public class MyPanel extends JPanel implements ActionListener {
     private void resettatore()
     {
         se_resettato=true;
+
+        Salvataggio.remove(1);
+        Salvataggio.add("0");
+
         if (flag==0 || copia.isEmpty())
         {
             JOptionPane.showMessageDialog(null, "Nulla Da Resettare!");

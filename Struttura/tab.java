@@ -5,10 +5,7 @@ import Scrittura_File.ScritturaFile;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -27,21 +24,17 @@ public class tab extends DefaultTableModel {
     private ArrayList<Conto> arrayConto;            //ArrayList principale su cui vengono fatte varie operazioni
     private ArrayList<String> salvataggio;          //Array che viene passato per ricordare il nome del file da utilizzare
                                                     //per eventuali scritture
-    private ArrayList<Integer> dim_din;
-
-    private JTextField CampoNetto;
-
     /**
      *
      * @param C Array che contiene la lista degli oggetti da inserire
      * @param s Arraylist che passo per poter avere il nome del file sempre aggiornato
+     *          e lo sttao della modifca della tabella
      */
-    public tab(ArrayList<Conto> C, ArrayList<String> s/*, JTextField CampoN*/) {
+    public tab(ArrayList<Conto> C, ArrayList<String> s) {
         //this.v = v; // inizializzato con il vettore
         //arrayConto=new ArrayList<>(C);
         arrayConto=C;
         salvataggio=s;                 //Passaggi tramite riferimento per via di funzioni delicate
-        //CampoNetto=new JTextField(String.valueOf(CampoN));  //Passaggi tramite riferimento per via di funzioni delicate
 
         settaValori();
     }
@@ -156,52 +149,49 @@ public class tab extends DefaultTableModel {
      * Infine salvato
      */
     public void setValueAt(Object value, int row, int col) {
-        /*if (row==-1)
-        {
-            row=dim_din.get(0);
-        }*/
+        if(salvataggio.get(1)=="0") {                   //campo che contiene lo stato della modifica
+            Conto contello = arrayConto.get(row);
 
-        Conto contello = arrayConto.get(row);
+            if (col == 0) {
 
-        if (col == 0) {
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                try {
+                    LocalDate l = LocalDate.parse(value.toString(), dtf);
+                } catch (DateTimeParseException e) {
+                    showMessageDialog(null, "Data non valida", "Errore", ERROR_MESSAGE);
+                    return;
+                }
 
-            try {
-                LocalDate l = LocalDate.parse(value.toString(), dtf);
-            }catch (DateTimeParseException e) {
-            showMessageDialog(null, "Data non valida", "Errore", ERROR_MESSAGE);
-            return;
+                contello.setData(value.toString());
+                arrayConto.set(row, contello);
+            }
+            if (col == 1) {
+                contello.setDescrizione(value.toString());
+                arrayConto.set(row, contello);
+            }
+            if (col == 2) {
+                try {
+                    int a = Integer.parseInt(value.toString());
+                } catch (NumberFormatException N) {
+                    showMessageDialog(null, "Valore intero non valido"
+                            , "Errore", ERROR_MESSAGE);
+                    return;
+                }
+                contello.setAmmontare(Integer.parseInt(value.toString()));
+                arrayConto.set(row, contello);
             }
 
-            contello.setData(value.toString());
-            arrayConto.set(row, contello);
+            ScritturaFile s = new ScritturaFile();
+            s.ScriviNormale(salvataggio.get(0), arrayConto, false);
+
+            fireTableDataChanged();
         }
-        if(col==1){
-            contello.setDescrizione(value.toString());
-            arrayConto.set(row, contello);
+        else
+        {
+            showMessageDialog(null, "Modifica non possibile",
+                    "Errore", ERROR_MESSAGE);
         }
-        if(col==2){
-            contello.setAmmontare(Integer.parseInt(value.toString()));
-            arrayConto.set(row, contello);
-
-            /*CalcolaEntrate ca = new CalcolaEntrate(arrayConto);
-            CampoNetto.setText(String.valueOf(ca.calcolatore()));
-            System.out.println(ca.calcolatore());               //questo è corretto
-
-            CampoNetto.repaint();
-            CampoNetto.validate();
-            Cambia();
-            settaValori();
-            CampoNetto.repaint();
-
-             */
-        }
-
-        ScritturaFile s = new ScritturaFile();
-        s.ScriviNormale(salvataggio.get(0), arrayConto, false);
-
-        fireTableDataChanged();
     }
 
     /**

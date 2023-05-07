@@ -3,6 +3,7 @@ package Scrittura_File;
 import Classe_Conto.Conto;
 import Struttura.tab;
 
+
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import javax.swing.table.DefaultTableModel;
@@ -11,7 +12,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.jopendocument.dom.OOUtils;
-import org.jopendocument.dom.spreadsheet.*;
+import org.jopendocument.dom.spreadsheet.SpreadSheet;
+
+//import org.jopendocument.dom.OOUtils;
+//import org.jopendocument.dom.spreadsheet.*;
 
 
 /**
