@@ -277,11 +277,12 @@ public class MyPanel extends JPanel implements ActionListener {
                                     }
                                     else{
                                         try{
-                                            int p=Integer.parseInt(c3);
+                                            int p=Integer.parseInt(campo3.toString());
                                         }catch (NumberFormatException N){
                                             showMessageDialog(null, "Ammontare non valido", "Errore", ERROR_MESSAGE);
                                             f.dispose();
                                             t.repaint();
+                                            return;
                                         }
 
                                     Conto ogg= new Conto(c1, c2, Integer.parseInt(c3));
